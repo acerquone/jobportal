@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class UsersService {
@@ -19,5 +20,10 @@ public class UsersService {
         users.setRegistrationDate(new Date(System.currentTimeMillis()));
         return usersRepository.save(users);
 
+    }
+
+    public Optional<Users> getUserByEmail(String email) {
+
+        return usersRepository.getUserByEmail(email);
     }
 }

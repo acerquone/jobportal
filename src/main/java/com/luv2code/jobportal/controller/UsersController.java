@@ -6,6 +6,7 @@ import com.luv2code.jobportal.service.UsersService;
 import com.luv2code.jobportal.service.UsersTypeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,9 +36,17 @@ public class UsersController {
     }
 
     @PostMapping("/register/new")
-    public String userRegistration(@Valid Users users){
+    public String userRegistration(@Valid Users users, Model model){
 
-        System.out.println(users);
+        if(usersService.getUserByEmail(users.getEmail()).isPresent()) {
+
+            model.addAttribute("error","Email already registered");
+            List<UsersTypes> usersTypes = usersTypeService.findAll();
+            model.addAttribute("getAllTypes",usersTypes);
+            model.addAttribute("user",new Users());
+            return "register";
+        }
+
         this.usersService.registerNewUser(users);
         return "dashboard";
     }
