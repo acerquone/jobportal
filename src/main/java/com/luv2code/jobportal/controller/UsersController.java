@@ -21,6 +21,7 @@ public class UsersController {
 
     private final UsersService usersService;
 
+
     @Autowired
     public UsersController(UsersTypeService usersTypeService,UsersService usersService) {
         this.usersTypeService = usersTypeService;

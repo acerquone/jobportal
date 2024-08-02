@@ -48,6 +48,10 @@ public class JobSeekerProfile {
         this.skillsList = skillsList;
     }
 
+    public JobSeekerProfile(Users savedUser) {
+        this.userId = savedUser;
+    }
+
     public int getUserAccountId() {
         return userAccountId;
     }
