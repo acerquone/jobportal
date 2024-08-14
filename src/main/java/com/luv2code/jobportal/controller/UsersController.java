@@ -54,7 +54,7 @@ public class UsersController {
         }
 
         this.usersService.registerNewUser(users);
-        return "dashboard";
+        return "redirect:/dashboard/";
     }
 
     @GetMapping("/login")
