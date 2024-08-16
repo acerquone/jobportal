@@ -4,6 +4,7 @@ import com.luv2code.jobportal.entity.RecruiterProfile;
 import com.luv2code.jobportal.entity.Users;
 import com.luv2code.jobportal.repository.UsersRepository;
 import com.luv2code.jobportal.service.RecruiterProfileService;
+import com.luv2code.jobportal.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,9 +12,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Controller
@@ -46,4 +52,36 @@ public class RecruiterProfileController {
 
         return "recruiter-profile";
     }
+
+    @PostMapping("/addNew")
+    public String addNew(RecruiterProfile recruiterProfile, @RequestParam("image")MultipartFile multipartFile, Model model){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(!(authentication instanceof AnonymousAuthenticationToken)){
+            String currentUsername = authentication.getName();
+            Users user = usersRepository.getUserByEmail(currentUsername).orElseThrow(()->new UsernameNotFoundException("User not found."));
+            recruiterProfile.setUserId(user);
+            recruiterProfile.setUserAccountId(user.getUserId());
+        }
+
+        String filename = "";
+        if(!multipartFile.getOriginalFilename().isEmpty()){
+            filename = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+            recruiterProfile.setProfilePhoto(filename);
+        }
+
+        model.addAttribute("profile",recruiterProfile);
+        RecruiterProfile savedProfile = recruiterProfileService.addNew(recruiterProfile);
+
+        String uploadDir = "photos/recruiter/"+savedProfile.getUserAccountId();
+
+        try {
+            FileUploadUtil.saveFile(uploadDir,filename,multipartFile);
+        } catch (Exception exception){
+            exception.printStackTrace();
+        }
+
+        return "redirect:/dashboard/";
+
+    }
+
 }
