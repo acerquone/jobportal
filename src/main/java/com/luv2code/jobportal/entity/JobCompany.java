@@ -19,6 +19,12 @@ public class JobCompany {
     public JobCompany() {
     }
 
+    public JobCompany(Integer id, String name, String logo) {
+        this.id = id;
+        this.name = name;
+        this.logo = logo;
+    }
+
     public Integer getId() {
         return id;
     }
