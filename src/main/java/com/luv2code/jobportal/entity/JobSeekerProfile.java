@@ -9,7 +9,7 @@ import java.util.List;
 public class JobSeekerProfile {
 
     @Id
-    private int userAccountId;
+    private Integer userAccountId;
 
     @OneToOne
     @JoinColumn(name = "user_account_id")
@@ -28,12 +28,12 @@ public class JobSeekerProfile {
     private String profilePhoto;
 
     @OneToMany(targetEntity = Skills.class,cascade = CascadeType.ALL, mappedBy = "jobSeekerProfile")
-    private List<Skills> skillsList;
+    private List<Skills> skills;
 
     public JobSeekerProfile() {
     }
 
-    public JobSeekerProfile(int userAccountId, Users userId, String firstName, String lastName, String city, String state, String country, String workAuthorization, String employmentType, String resume, String profilePhoto, List<Skills> skillsList) {
+    public JobSeekerProfile(Integer userAccountId, Users userId, String firstName, String lastName, String city, String state, String country, String workAuthorization, String employmentType, String resume, String profilePhoto, List<Skills> skillsList) {
         this.userAccountId = userAccountId;
         this.userId = userId;
         this.firstName = firstName;
@@ -45,18 +45,18 @@ public class JobSeekerProfile {
         this.employmentType = employmentType;
         this.resume = resume;
         this.profilePhoto = profilePhoto;
-        this.skillsList = skillsList;
+        this.skills = skillsList;
     }
 
     public JobSeekerProfile(Users savedUser) {
         this.userId = savedUser;
     }
 
-    public int getUserAccountId() {
+    public Integer getUserAccountId() {
         return userAccountId;
     }
 
-    public void setUserAccountId(int userAccountId) {
+    public void setUserAccountId(Integer userAccountId) {
         this.userAccountId = userAccountId;
     }
 
@@ -140,12 +140,19 @@ public class JobSeekerProfile {
         this.profilePhoto = profilePhoto;
     }
 
-    public List<Skills> getSkillsList() {
-        return skillsList;
+    public List<Skills> getSkills() {
+        return skills;
     }
 
-    public void setSkillsList(List<Skills> skillsList) {
-        this.skillsList = skillsList;
+    public void setSkills(List<Skills> skills) {
+        this.skills = skills;
+    }
+
+    @Transient
+    public String getPhotosImagePath() {
+
+        if(profilePhoto==null || userAccountId==null){return null;}
+        return "/photos/candidate/" + userAccountId + "/" + profilePhoto;
     }
 
     @Override
@@ -162,7 +169,6 @@ public class JobSeekerProfile {
                 ", employmentType='" + employmentType + '\'' +
                 ", resume='" + resume + '\'' +
                 ", profilePhoto='" + profilePhoto + '\'' +
-                ", skillsList=" + skillsList +
                 '}';
     }
 }
